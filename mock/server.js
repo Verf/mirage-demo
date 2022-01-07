@@ -34,7 +34,7 @@ function _search(db, params) {
 
 // 创建mock服务
 export function makeServer({ environment = "development" } = {}) {
-  let server = createServer({
+  createServer({
     environment,
 
     // 数据表
@@ -99,6 +99,4 @@ export function makeServer({ environment = "development" } = {}) {
       this.passthrough()
     },
   });
-
-  return server;
 }
