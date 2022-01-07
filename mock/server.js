@@ -89,7 +89,6 @@ export function makeServer({ environment = "development" } = {}) {
 
       this.post("/demo/delete", (schema, request) => {
         let attrs = JSON.parse(request.requestBody);
-        console.log(attrs)
         attrs.forEach(function (id) {
           schema.menus.find(id).destroy();
         });
