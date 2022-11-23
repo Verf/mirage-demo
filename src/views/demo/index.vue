@@ -31,11 +31,11 @@
         >
           <!-- 表头 -->
           <el-table-column type="selection" width="40" />
-          <el-table-column label="字段1" prop="col1" align="center" fixed />
-          <el-table-column label="字段2" prop="col2" align="center" fixed />
-          <el-table-column label="字段3" prop="col3" align="center" fixed>
+          <el-table-column label="name" prop="name" align="center" fixed />
+          <el-table-column label="word" prop="word" align="center" fixed />
+          <el-table-column label="isok" prop="isok" align="center" fixed>
             <template slot-scope="scope">
-              <span>{{ scope.row.col3 ? "是" : "否" }}</span>
+              <span>{{ scope.row.col3 ? '是' : '否' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" fixed>
@@ -72,14 +72,14 @@
         :inline-message="true"
         style="width: 100%"
       >
-        <el-form-item label="Col1" prop="col1">
-          <el-input v-model="temp.col1" />
+        <el-form-item label="name" prop="name">
+          <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="Col2" prop="col2">
-          <el-input v-model="temp.col2" />
+        <el-form-item label="word" prop="word">
+          <el-input v-model="temp.word" />
         </el-form-item>
-        <el-form-item label="Col3" prop="col3">
-          <el-radio-group v-model="temp.col3">
+        <el-form-item label="isok" prop="isok">
+          <el-radio-group v-model="temp.isok">
             <el-radio :label="true">是</el-radio>
             <el-radio :label="false">否</el-radio>
           </el-radio-group>
@@ -98,32 +98,38 @@
 </template>
 
 <script>
-import { findDemo, insertDemo, updateDemo, deleteDemo, getBack } from "@/api/demo";
+import {
+  findDemo,
+  insertDemo,
+  updateDemo,
+  deleteDemo,
+  getBack,
+} from '@/api/demo';
 
 export default {
-  name: "Demo",
+  name: 'Demo',
   data() {
     return {
       list: [],
       current: 1,
       pages: 0,
-      sizes: [10, 20, 50, 100],
+      sizes: [10, 20],
       size: 10,
       total: 0,
       isLoading: false,
       temp: {
-        col1: "",
-        col2: "",
-        col3: true,
+        name: '',
+        word: '',
+        isok: true,
       },
       queryParams: {
-        name: "",
+        name: '',
       },
       dialogVisable: false,
-      dialogStatus: "",
+      dialogStatus: '',
       titleMap: {
-        update: "编辑",
-        create: "添加",
+        update: '编辑',
+        create: '添加',
       },
       selected: [],
     };
@@ -150,7 +156,12 @@ export default {
 
     handleSearch() {
       this.isLoading = true;
-      findDemo(this.queryParams).then((res) => {
+      let params = {
+        current: 1,
+        size: this.size,
+        name: this.queryParams.name,
+      };
+      findDemo(params).then((res) => {
         this.current = res.data.current;
         this.size = res.data.size;
         this.pages = res.data.pages;
@@ -166,21 +177,21 @@ export default {
 
     resetTemp() {
       this.temp = {
-        col1: "",
-        col2: "",
-        col3: true,
+        name: '',
+        word: '',
+        isok: true,
       };
     },
 
     handleAdd() {
       this.resetTemp();
-      this.dialogStatus = "create";
+      this.dialogStatus = 'create';
       this.dialogVisable = true;
     },
 
     handleEdit(row) {
       this.temp = Object.assign({}, row);
-      this.dialogStatus = "update";
+      this.dialogStatus = 'update';
       this.dialogVisable = true;
     },
 
@@ -214,7 +225,7 @@ export default {
         selectedId.push(item.id);
       });
       if (selectedId.length) {
-        this.$confirm("确定删除所选项？").then(() => {
+        this.$confirm('确定删除所选项？').then(() => {
           deleteDemo(selectedId).then((res) => {
             if (res.data.resCode === 200) {
               this.$notify.success({ message: res.data.message });
@@ -226,17 +237,18 @@ export default {
           });
         });
       } else {
-        this.$notify.warning({ message: "请选择一条记录" });
+        this.$notify.warning({ message: '请选择一条记录' });
       }
     },
 
     handleBack() {
-      getBack().then( () => {
-        console.log("请求后端接口")
-      })
+      getBack().then(() => {
+        console.log('请求后端接口');
+      });
     },
 
     handleSizeChange(val) {
+      this.current = 1;
       this.size = val;
       this.initData();
     },
